@@ -1,0 +1,95 @@
+import React, { Component } from 'react'
+
+
+class InfoBox extends Component {
+
+    constructor(props) {
+
+        super(props);
+    }
+
+
+    getMinute() {
+
+        if (!this.props.eventInfo.object) {
+            return "";
+        }
+        let myMinute = Date.parse(this.props.eventInfo.object.actual_time);
+        myMinute = ((myMinute - this.props.startMillis)/1000.0)/60.0;
+        return myMinute.toFixed(2);
+    }
+
+    getStpPinInfo() {
+        let infoHtml = <div></div>
+        return infoHtml
+    }
+
+    getStpArcInfo() {
+
+        let  arcObject = this.props.eventInfo.object;
+
+        // Shorten names
+        let fromName = arcObject.from.name
+        if (fromName.length > 24)
+            fromName = fromName.substring(0,24) + "..."
+
+        let toName = arcObject.to.name
+        if (toName.length > 24)
+            toName = toName.substring(0,24) + "..."
+
+        let messId = arcObject.message_id
+        if (messId.length > 24)
+            messId = messId.substring(0,24) + "..."
+
+        let infoHtml = <div className="info-html">
+            <p><span className='entity-info-title'>Shooter to Target Pairing Arc</span></p>
+            <p>Firing Entity: <span className='values'>{fromName}</span></p>
+            <p>Target Entity: <span className='values'>{toName}</span></p>
+            <p>Actual Time: <span className='values'>{arcObject.actual_time}</span></p>
+            <p>Minutes from start: <span className='values'>{this.getMinute()}</span></p>
+            <p>Message ID: <span className='values'>{messId}</span></p>
+        </div>
+        
+        return infoHtml
+    }
+
+    getEntityInfoType() {
+        return "stp-arc"
+    }
+
+    getEntityInfoHtml() {
+
+        if (this.props.eventInfo.object == null)
+            return <div></div>;
+
+        let infoHtml
+        switch (this.getEntityInfoType()) {
+            case "stp-arc":
+                infoHtml = this.getStpArcInfo()
+            break;
+
+            case "stp-pin":
+                infoHtml = this.getStpPinInfo()
+            break;
+        }
+
+        return infoHtml
+
+    }
+
+    render() {
+        
+
+        return (
+            <div className="info-box">
+                <div><p><b>Entity Info (hover): </b></p></div>
+                <div className="entity-info" style={{ marginLeft: '5px' }}>
+                    {this.getEntityInfoHtml()}
+                </div>
+            </div>
+        )
+    }
+}
+
+
+export default InfoBox;
